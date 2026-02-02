@@ -19,7 +19,7 @@
         body { background-color: var(--bg); color: var(--text-white); font-family: 'Inter', sans-serif; line-height: 1.6; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-        /* Corregido: Alineación del Header */
+        /* Header */
         header { 
             padding: 80px 0 60px; 
             text-align: center; 
@@ -28,20 +28,14 @@
         h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 10px; }
         .tagline { color: var(--accent); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 2px; }
         
-        /* FIX: align-items: center asegura que los iconos y textos estén parejos */
         .contact-bar { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 30px; 
-            color: var(--text-gray); 
-            font-size: 0.95rem; 
-            flex-wrap: wrap; 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 30px; color: var(--text-gray); font-size: 0.95rem; flex-wrap: wrap; 
         }
         .contact-bar span { display: flex; align-items: center; gap: 8px; }
         .contact-bar i { color: var(--accent); }
 
-        /* Grid de Proyectos Profesional */
+        /* Grid de Proyectos */
         .section-title { margin: 60px 0 40px; border-left: 5px solid var(--accent); padding-left: 20px; font-size: 2.2rem; }
         .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 30px; }
 
@@ -52,7 +46,6 @@
         }
         .card:hover { transform: translateY(-12px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2); }
 
-        /* VISTA PREVIA MEJORADA */
         .preview { width: 100%; height: 220px; background: #000; overflow: hidden; position: relative; }
         .preview img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.5s; }
         .card:hover .preview img { opacity: 1; transform: scale(1.05); }
@@ -65,11 +58,65 @@
         .btn { 
             background: var(--accent); color: white; text-decoration: none; padding: 14px; 
             border-radius: 14px; font-weight: 700; text-align: center; transition: 0.3s;
-            margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border: none; font-size: 1rem;
         }
         .btn:hover { background: #2563eb; transform: scale(1.02); box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
 
         footer { padding: 80px 0; text-align: center; color: var(--text-gray); border-top: 1px solid var(--border); margin-top: 60px; }
+
+        /* ESTILOS DE LA VENTANA MODAL (POPUP) */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(5px);
+            align-items: center; justify-content: center;
+        }
+        
+        .modal-content {
+            position: relative;
+            background-color: var(--card);
+            margin: auto;
+            padding: 20px;
+            border: 1px solid var(--border);
+            width: 90%; max-width: 800px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: scale(0.9);}
+            to {opacity: 1; transform: scale(1);}
+        }
+
+        .close-modal {
+            color: var(--text-gray);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            z-index: 10;
+        }
+        .close-modal:hover { color: var(--accent); }
+
+        .modal-gallery img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .modal-title { margin-bottom: 20px; color: var(--text-white); }
+
     </style>
 </head>
 <body>
@@ -96,66 +143,123 @@
     <p>© 2026 Alonso Silva Vidal | Ingeniería de Sistemas</p>
 </footer>
 
+<div id="imageModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="modalTitle" class="modal-title"></h2>
+        <div id="modalGallery" class="modal-gallery">
+            </div>
+    </div>
+</div>
+
 <script>
+    // Configuración de Proyectos
+    // NOTA: Se agregó 'image/' antes de cada nombre de archivo y se respetó .JPG mayúscula para la imagen 1.
     const projects = [
         {
             title: "Control de Interno",
             tag: "Power BI / Dashboard",
-            desc: "Seguimiento avanzado de internos de medicina y rotaciones clínicas mediante análisis de datos estratégicos[cite: 44, 298].",
-            image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800",
-            link: "https:/"
+            desc: "Seguimiento avanzado de internos de medicina y rotaciones clínicas mediante análisis de datos estratégicos.",
+            thumb: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800",
+            type: "modal", 
+            images: ["image/imagen1.JPG", "image/imagen2.png"] // Rutas corregidas
         },
         {
             title: "Indicadores de Convenios",
             tag: "BI & Data Analysis",
             desc: "Monitoreo estratégico de acuerdos institucionales y visualización de indicadores mediante gráficas analíticas.",
-            image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800", // GRÁFICA PROFESIONAL
-            link: "https:"
+            thumb: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800",
+            type: "modal",
+            images: ["image/imagen3.png"] // Ruta corregida
         },
         {
             title: "Registro de Sedes",
             tag: "Web App / Salud",
-            desc: "Sistema de geolocalización de establecimientos de salud para la gestión de plazas académicas de primer nivel.",
-            image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800", // PUESTO DE SALUD
-            link: "http"
+            desc: "Sistema de geolocalización de establecimientos de salud para la gestión de plazas académicas.",
+            thumb: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800",
+            type: "modal",
+            images: ["image/imagen4.png"] // Ruta corregida
         },
         {
             title: "Biblioteca Virtual",
             tag: "Full Stack Java",
-            desc: "Repositorio institucional para la gestión y publicación de investigaciones científicas en Java[cite: 220, 237, 300].",
-            image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800",
-            link: "https://repositorio-docencia-diris-lima-centro.onrender.com/"
+            desc: "Repositorio institucional para la gestión y publicación de investigaciones científicas en Java.",
+            thumb: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800",
+            type: "modal",
+            images: ["image/imagen5.png"] // Ruta corregida
         },
         {
             title: "Colosal Producciones",
             tag: "E-Commerce",
-            desc: "Plataforma para productora musical con sistema integrado de venta de entradas y gestión de eventos[cite: 24].",
-            image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800",
-            link: "https://colosalproducciones.vercel.app/"
+            desc: "Plataforma para productora musical con sistema integrado de venta de entradas y gestión de eventos.",
+            thumb: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800",
+            type: "link", 
+            url: "https://colosalproducciones.vercel.app/"
         },
         {
             title: "Ralph's Sanguchería",
             tag: "Food Retail",
-            desc: "Interfaz moderna para la toma de pedidos y visualización dinámica de productos para el sector comercial[cite: 24].",
-            image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800",
-            link: "https://ralphs-sangucheria.onrender.com/"
+            desc: "Interfaz moderna para la toma de pedidos y visualización dinámica de productos para el sector comercial.",
+            thumb: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800",
+            type: "link", 
+            url: "https://ralphs-sangucheria.onrender.com/"
         }
     ];
 
     const container = document.getElementById('portfolio');
-    projects.forEach(p => {
+    const modal = document.getElementById('imageModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalGallery = document.getElementById('modalGallery');
+    const closeModal = document.querySelector('.close-modal');
+
+    // Generar Tarjetas
+    projects.forEach((p, index) => {
+        let buttonHtml = '';
+        
+        if (p.type === 'link') {
+            buttonHtml = `<a href="${p.url}" target="_blank" class="btn">Explorar Proyecto <i class="fas fa-external-link-alt"></i></a>`;
+        } else {
+            buttonHtml = `<button onclick="openProject(${index})" class="btn">Ver Detalles <i class="fas fa-images"></i></button>`;
+        }
+
         container.innerHTML += `
             <div class="card">
-                <div class="preview"><img src="${p.image}" alt="${p.title}"></div>
+                <div class="preview"><img src="${p.thumb}" alt="${p.title}"></div>
                 <div class="card-body">
                     <span class="card-tag">${p.tag}</span>
                     <h3 class="card-title">${p.title}</h3>
                     <p class="card-text">${p.desc}</p>
-                    <a href="${p.link}" target="_blank" class="btn">Explorar Proyecto <i class="fas fa-external-link-alt"></i></a>
+                    ${buttonHtml}
                 </div>
             </div>
         `;
     });
+
+    // Función para abrir el Modal
+    window.openProject = function(index) {
+        const project = projects[index];
+        modalTitle.innerText = project.title;
+        modalGallery.innerHTML = ''; 
+
+        project.images.forEach(imgSrc => {
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = "Detalle del proyecto";
+            modalGallery.appendChild(img);
+        });
+
+        modal.style.display = "flex"; 
+    }
+
+    closeModal.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 </script>
 
 </body>
